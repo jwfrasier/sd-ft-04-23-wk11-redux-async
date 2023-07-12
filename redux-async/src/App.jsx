@@ -1,13 +1,21 @@
 import "./App.css";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { increment, decrement, reset } from "./reducers/counterSlice";
+import { increment, decrement } from "./reducers/counterSlice";
 import { fetchPokemon } from "./reducers/pokemonSlice";
+import fetchPokemon2, {
+  useLazyGetPokemonQuery,
+} from "./reducers/pokemonCreateApiSlice";
 
 function App() {
-  const counter = useSelector((state) => state.counter.value);
-  const loading = useSelector((state) => state.pokemon.loading);
-  const pokemon = useSelector((state) => state.pokemon.value);
   const dispatch = useDispatch();
+  const counter = useSelector((state) => state.counter.value);
+  const [trigger, { data: pokemonData, isLoading, error }] =
+    useLazyGetPokemonQuery();
+  const handleClick = () => {
+    trigger();
+  };
+
   return (
     <>
       <h1>Redux Async</h1>
@@ -15,8 +23,11 @@ function App() {
       <button onClick={() => dispatch(increment())}>Increment</button>
       <button onClick={() => dispatch(decrement())}>Decrement</button>
       <button onClick={() => dispatch(fetchPokemon())}>Fetch Pokemon</button>
-      {loading && <p>Loading....</p>}
-      {!loading && pokemon.map((poke) => <p key={poke.id}>{poke.name}</p>)}
+      <button onClick={handleClick}>Get Pokémon</button>
+      {pokemonData &&
+        pokemonData?.results.map((pokemon) => {
+          return <p key={pokemon.name}>{pokemon.name}</p>;
+        })}
     </>
   );
 }
