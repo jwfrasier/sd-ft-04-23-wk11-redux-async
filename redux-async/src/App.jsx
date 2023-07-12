@@ -4,14 +4,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement } from "./reducers/counterSlice";
 import { fetchPokemon } from "./reducers/pokemonSlice";
 import fetchPokemon2, {
+  useGetPokemonQuery,
   useLazyGetPokemonQuery,
 } from "./reducers/pokemonCreateApiSlice";
 
 function App() {
   const dispatch = useDispatch();
   const counter = useSelector((state) => state.counter.value);
+
+  // const { data, error, isLoading } = useGetPokemonQuery();
   const [trigger, { data: pokemonData, isLoading, error }] =
     useLazyGetPokemonQuery();
+
   const handleClick = () => {
     trigger();
   };
